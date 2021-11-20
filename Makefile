@@ -1,13 +1,16 @@
 # -*- Makefile -*-
 
+CC = gcc
+CFLAGS = -lpthread
+
 output: main.o ptm/ptm.o
-	gcc main.o ptm/ptm.o -o output
+	${CC} main.o ptm/ptm.o -o output ${CFLAGS}
 
 main.o: main.c ptm/ptm.h
-	gcc -c main.c
+	${CC} -c main.c ${CFLAGS}
 
 ptm.o: ptm/ptm.c
-	gcc -c ptm/ptm.c
+	${CC} -c ptm/ptm.c ${CFLAGS}
 
 clean:
 	rm -f *.o output
