@@ -6,7 +6,7 @@ output: main.o ptm/ptm.o
 main.o: main.c ptm/ptm.h
 	gcc -c main.c
 
-ptm.o: ptm.c
+ptm.o: ptm/ptm.c
 	gcc -c ptm/ptm.c
 
 clean:

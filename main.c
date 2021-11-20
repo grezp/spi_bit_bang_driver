@@ -3,7 +3,8 @@
 
 int main()
 {
-    /* printf("Hello, world!\n"); */
-    void PrintDebug();
+    while (1) {
+        check_temp_limits();
+    }
     return 0;
 }
