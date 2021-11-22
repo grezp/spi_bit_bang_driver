@@ -3,6 +3,7 @@
 #include <errno.h>
 
 #include "ptm.h"
+#include "../tmp125/tmp125.h"
 
 /* Local Defines */
 #define NUM_SENSORS 4
@@ -13,38 +14,13 @@ static struct timespec remaining;
 static struct timespec request = {0, READ_TIME*1000000L};
 
 
-int32_t tmp125_read_temp(uint8_t temp_sensor_id, float* p_temp_in_degrees_c)
-{
-    int32_t status = 0;
-    *p_temp_in_degrees_c = 0;
-
-    //hardcode temp vals for mock function
-    if (temp_sensor_id == 1) {
-        *p_temp_in_degrees_c = 0.0f;
-    }
-    else if (temp_sensor_id == 2) {
-        *p_temp_in_degrees_c = -40.0f;
-    }
-    else if (temp_sensor_id == 3) {
-        *p_temp_in_degrees_c = 85.1f;
-    }
-    else if (temp_sensor_id == 4) {
-        *p_temp_in_degrees_c = -42.0f;
-    }
-    else {
-        status = -1;
-    }
-
-    return status;
-}
-
 void start_check_temp(pthread_t *th, pthread_mutex_t* mxq)
 {
     // Init and lock mutex before creating thread.
     // As long a mutex is closed, thread will run.
     pthread_mutex_init(mxq, NULL);
     pthread_mutex_lock(mxq);
-    pthread_create(th, NULL, check_temp_limits, mxq);
+    pthread_create(th, NULL, &check_temp_limits, mxq);
 }
 
 void stop_check_temp(pthread_t *th, pthread_mutex_t* mxq)
@@ -54,7 +30,7 @@ void stop_check_temp(pthread_t *th, pthread_mutex_t* mxq)
 
 }
 
-static int exit_thread(pthread_mutex_t* mtx)
+int exit_thread(pthread_mutex_t* mtx)
 {
     switch(pthread_mutex_trylock(mtx)) {
         // if locked, unlock and return true
@@ -69,7 +45,7 @@ static int exit_thread(pthread_mutex_t* mtx)
     return 1;
 }
 
-static void* check_temp_limits(void* mtx)
+void* check_temp_limits(void* mtx)
 {
     float tempVal[NUM_SENSORS];
     pthread_mutex_t* mx = (pthread_mutex_t*) mtx;

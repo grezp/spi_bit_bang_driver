@@ -63,7 +63,7 @@ uint16_t bit_bang_spi_read(uint8_t temp_sensor_id)
      
     uint16_t data = 0;
 
-    for (uint8_t i=REG_SIZE-1; i>=0; i--) {
+    for (int8_t i=REG_SIZE-1; i>=0; i--) {
         uint8_t pin_state;
 
         // set clock HI
@@ -103,4 +103,3 @@ float ten_bit_2_float(uint16_t bits)
 
     return sign ? -data : data;
 }
-

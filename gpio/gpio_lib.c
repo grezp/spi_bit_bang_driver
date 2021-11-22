@@ -10,6 +10,7 @@ Author: John Doe, Epiq Solutions
 #include <stdio.h>
 #include <stdint.h>
 #include "gpio_lib.h"
+#include <stdlib.h> // used for random generator
 
 /*Local Defines */ 
 #define NUM_PORTS 1 /*we have a single 8-bit GPIO port available */ 
@@ -23,6 +24,14 @@ Author: John Doe, Epiq Solutions
 file */
 static uint8_t gpio_port_pins[NUM_PORTS];
 static uint8_t gpio_port_dirs[NUM_PORTS];
+
+uint8_t random_bits()
+{
+    if ( 0.5f < (double)rand() / (double)RAND_MAX )
+        return 1;
+    return 0;
+}
+
 /*Global Functions */
 /*Description: set the GPIO direction for the specified GPIO pin pin_id on GPIO port port_id.
 Parameters: dir=0 indicates output, dir=1 indicates input,
@@ -84,14 +93,19 @@ int32_t gpio_read_pin(uint8_t port_id, uint8_t pin_id, uint8_t *p_pin_state)
         status = -2;
         goto out;
     }
-    if ((gpio_port_pins[port_id] &(1 << pin_id)))
-    {
-        *p_pin_state = 1;
-    }
-    else
-    {
-        *p_pin_state = 0;
-    }
+
+    // NOTE: I rewrote this portion to generate random data.
+    //       Otherwise, p_pin_state will always be 0.
+    *p_pin_state = random_bits();
+
+    // if ((gpio_port_pins[port_id] &(1 << pin_id)))
+    // {
+    //     *p_pin_state = 1;
+    // }
+    // else
+    // {
+    //     *p_pin_state = 0;
+    // }
     printf("Info: successfully read pin %d of port %d with a value of %d\r\n", pin_id, port_id,
         *p_pin_state);
     out:
